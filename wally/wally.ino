@@ -185,7 +185,7 @@ long ping()
   Serial.print(cm);
   Serial.print("cm");
   Serial.println();
-  delay(50);
+  //delay(50);
 
   return inches;
 }
@@ -214,8 +214,8 @@ void goForward()
   //Get the distance from the sensor and map it to achieve
   //a gradual increase to the motor speed
   int motorSpeed = ping();
-  motorSpeed = map (motorSpeed, 8, 60, 100, 255);
-  motorSpeed = constrain( motorSpeed, 0, 255);
+  motorSpeed = map (motorSpeed, 8, 126, 100, 254);
+  motorSpeed = constrain( motorSpeed, 0, 254);
   Serial.print("MotorSpeed: ");
   Serial.println(motorSpeed);
   //Drive both motors CW, full speed 255, half speed 127
@@ -230,14 +230,14 @@ void goBackwards()
   motorDrive(motor2, turnCCW, 220);
 }
 
-void turnRight()
+void turnLeft()
 {
   //Turn towards motor1: Stop Motor1, slow Motor2
   motorStop(motor1);
   motorDrive(motor2, turnCW, 160);
 }
 
-void turnLeft()
+void turnRight()
 {
   //Turn towards motor2: Stop Motor2, slow Motor2
   motorStop(motor2);
