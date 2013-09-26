@@ -241,7 +241,7 @@ void turnLeft()
 {
   //Turn towards motor2: Stop Motor2, slow Motor2
   motorStop(motor2);
-  motorDrive(motor1, turnCCW, 160);
+  motorDrive(motor1, turnCW, 160);
 }
 
 void brake()
