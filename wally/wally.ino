@@ -33,12 +33,20 @@ The Ping))) circuit:
 
 ========================================================================= */
 
-const int       pingPin = 7;
-const int       ledPin = 13;
-static boolean  turnCW = 0;  //for motorDrive function
-static boolean  turnCCW = 1; //for motorDrive function
-static boolean  motor1 = 0;  //for motorDrive, motorStop, motorBrake functions
-static boolean  motor2 = 1;  //for motorDrive, motorStop, motorBrake functions
+#include <Servo.h>
+
+const int       servoPin = 2;
+const int       pingPin  = 7;
+const int       ledPin   = 13;
+static boolean  turnCW   = 0;  //for motorDrive function
+static boolean  turnCCW  = 1; //for motorDrive function
+static boolean  motor1   = 0;  //for motorDrive, motorStop, motorBrake functions
+static boolean  motor2   = 1;  //for motorDrive, motorStop, motorBrake functions
+
+
+//Servo
+int pos = 0;
+Servo myServo;
 
 //Motor 1
 int pinAIN1 = 9; //Direction
@@ -49,6 +57,11 @@ int pinPWMA = 3; //Speed
 int pinBIN1 = 11; //Direction
 int pinBIN2 = 12; //Direction
 int pinPWMB = 5; //Speed
+
+//Ping
+int distanceForward = 0;
+int leftDistance    = 0;
+int rightDistance   = 0;
 
 //Standby
 int pinSTBY = 10;
@@ -69,34 +82,77 @@ void setup() {
   pinMode(pinBIN2, OUTPUT);
 
   pinMode(pinSTBY, OUTPUT);
+
+  myServo.attach(servoPin);
 }
 
 void loop()
 {
-  //get the distance(inches) from the ping function
-  long distanceInches = ping();
-  Serial.println(distanceInches);
 
-  if ((distanceInches >= 4) && (distanceInches <= 6))
+  //get the distance(inches) from the ping function
+  distanceForward = ping();
+  Serial.print("distanceForward: ");
+  Serial.println(distanceForward);
+
+  //path is clear
+  if (distanceForward > 8) {
+
+    myServo.write(83); //center the servo
+    goForward();
+  }
+  else if ((distanceForward >= 3) && (distanceForward <= 7 ))
   {
     brake();
-    delay(100);
-    turnRight();
+    //scan right
+    myServo.write(110);
+    delay(500);
+    rightDistance = ping();
+    Serial.print("rightDistance: ");
+    Serial.println(rightDistance);
+    delay(500);
+    //scan left
+    myServo.write(40);
+    delay(500);
+    leftDistance = ping();
+    Serial.print("leftDistance: ");
+    Serial.println(leftDistance);
+    delay(500);
+    myServo.write(83); //center the servo
+    delay(500);
+    compareDistance();
     blink();
   }
-  else if (distanceInches <= 3)
+  else if (distanceForward <= 2)
   {
-    brake();
-    delay(100);
     goBackwards();
     blink();
   }
-  else
-  {
-    goForward();
-  }
+
 }
 // ========================================================================
+
+/* Ping distance functions */
+void compareDistance()
+{
+  if (leftDistance > rightDistance)
+  {
+    turnLeft();
+    Serial.println("turnLeft");
+    delay(500);
+  }
+  else if(leftDistance < rightDistance)
+  {
+    turnRight();
+    Serial.println("turnRight");
+    delay(500);
+  }
+  else
+  {
+    goBackwards();
+    delay(500);
+  }
+
+}
 
 /* Ping functions */
 long ping()
@@ -155,9 +211,9 @@ long microsecondsToCentimeters(long microseconds)
 /* Motor functions */
 void goForward()
 {
-  //Get the inches from the senson and map them to achieve
+  //Get the distance from the sensor and map it to achieve
   //a gradual increase to the motor speed
-  long motorSpeed = ping();
+  int motorSpeed = ping();
   motorSpeed = map (motorSpeed, 8, 60, 100, 255);
   motorSpeed = constrain( motorSpeed, 0, 255);
   Serial.print("MotorSpeed: ");
@@ -170,15 +226,22 @@ void goForward()
 void goBackwards()
 {
   //Drive both motors CCW, full speed 255, half speed 127
-  motorDrive(motor1, turnCCW, 120);
-  motorDrive(motor2, turnCCW, 120);
+  motorDrive(motor1, turnCCW, 220);
+  motorDrive(motor2, turnCCW, 220);
 }
 
 void turnRight()
 {
   //Turn towards motor1: Stop Motor1, slow Motor2
   motorStop(motor1);
-  motorDrive(motor2, turnCW, 200);
+  motorDrive(motor2, turnCW, 160);
+}
+
+void turnLeft()
+{
+  //Turn towards motor2: Stop Motor2, slow Motor2
+  motorStop(motor2);
+  motorDrive(motor1, turnCCW, 160);
 }
 
 void brake()
