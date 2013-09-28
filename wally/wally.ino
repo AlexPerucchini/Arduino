@@ -100,7 +100,7 @@ void loop()
     myServo.write(83); //center the servo
     goForward();
   }
-  else if ((distanceForward >= 3) && (distanceForward <= 7 ))
+  else if ((distanceForward > 4) && (distanceForward <= 9))
   {
     brake();
     //scan right
@@ -122,7 +122,7 @@ void loop()
     compareDistance();
     blink();
   }
-  else if (distanceForward <= 2)
+  else if (distanceForward <= 3)
   {
     goBackwards();
     blink();
@@ -148,7 +148,7 @@ void compareDistance()
   }
   else
   {
-    goBackwards();
+    reverse();
     delay(500);
   }
 
@@ -214,7 +214,7 @@ void goForward()
   //Get the distance from the sensor and map it to achieve
   //a gradual increase to the motor speed
   int motorSpeed = ping();
-  motorSpeed = map (motorSpeed, 8, 126, 100, 254);
+  motorSpeed = map (motorSpeed, 8, 60, 100, 254);
   motorSpeed = constrain( motorSpeed, 0, 254);
   Serial.print("MotorSpeed: ");
   Serial.println(motorSpeed);
@@ -228,6 +228,13 @@ void goBackwards()
   //Drive both motors CCW, full speed 255, half speed 127
   motorDrive(motor1, turnCCW, 220);
   motorDrive(motor2, turnCCW, 220);
+}
+
+void reverse()
+{
+  //Do a tight turn towards motor1: Motor2 forward, Motor1 reverse
+  motorDrive(motor1, turnCCW, 192);
+  motorDrive(motor2, turnCW, 192);
 }
 
 void turnLeft()
