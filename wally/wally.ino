@@ -36,6 +36,7 @@ The Ping))) circuit:
 #include <Servo.h>
 
 const int       servoPin = 2;
+const int       piezoPin = 4;
 const int       pingPin  = 7;
 const int       ledPin   = 13;
 static boolean  turnCW   = 0;  //for motorDrive function
@@ -63,12 +64,17 @@ int distanceForward = 0;
 int leftDistance    = 0;
 int rightDistance   = 0;
 
+//piezo
+
 //Standby
 int pinSTBY = 10;
 
 void setup() {
   // initialize serial communication:
   Serial.begin(9600);
+
+  //peizo sound
+  pinMode(piezoPin, OUTPUT);
 
   //set pinMode
   pinMode(ledPin, OUTPUT);
@@ -95,12 +101,12 @@ void loop()
   Serial.println(distanceForward);
 
   //path is clear
-  if (distanceForward > 8) {
+  if (distanceForward > 10) {
 
     myServo.write(83); //center the servo
     goForward();
   }
-  else if ((distanceForward > 4) && (distanceForward <= 9))
+  else if ((distanceForward >= 5) && (distanceForward <= 9))
   {
     brake();
     //scan right
@@ -120,12 +126,10 @@ void loop()
     myServo.write(83); //center the servo
     delay(500);
     compareDistance();
-    blink();
   }
-  else if (distanceForward <= 3)
+  else if (distanceForward <= 4)
   {
-    goBackwards();
-    blink();
+    reverse();
   }
 
 }
@@ -228,6 +232,7 @@ void goBackwards()
   //Drive both motors CCW, full speed 255, half speed 127
   motorDrive(motor1, turnCCW, 220);
   motorDrive(motor2, turnCCW, 220);
+  beep();
 }
 
 void reverse()
@@ -235,6 +240,7 @@ void reverse()
   //Do a tight turn towards motor1: Motor2 forward, Motor1 reverse
   motorDrive(motor1, turnCCW, 192);
   motorDrive(motor2, turnCW, 192);
+  beep();
 }
 
 void turnLeft()
@@ -349,3 +355,16 @@ void blink()
     digitalWrite(ledPin, LOW);
   }
 }
+
+/* Piezo beep */
+void beep(){
+  for (int i = 0; i < 3; i++)
+  {
+    digitalWrite(4, HIGH);      // Almost any value can be used except 0 and 255                          // experiment to get the best tone
+    delay(50);          // wait for a delayms ms
+    digitalWrite(4, LOW);       // 0 turns it off
+    delay(50);          // wait for a delayms ms
+  }
+  blink();
+}
+
