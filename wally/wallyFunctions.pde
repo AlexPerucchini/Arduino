@@ -1,6 +1,12 @@
-/* This .pde file gets concatenated at the end of the Wally.ino file to separate
+/*
+wallyFunctions.pde
+Author: Alex Perucchini
+
+This .pde file gets concatenated at the end of the Wally.ino file to separate
 all functions calls from the main  driver
 */
+
+// distance function
 void compareDistance()
 {
   if (leftDistance > rightDistance)
@@ -182,7 +188,6 @@ This "Short Brake"s the specified motor, by setting speed to zero
     analogWrite(pinPWMB, 0);
 
 }
-
 
 void motorStop(boolean motorNumber)
 {
