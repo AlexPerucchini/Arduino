@@ -3,10 +3,57 @@ wallyFunctions.pde
 Author: Alex Perucchini
 
 This .pde file gets concatenated at the end of the Wally.ino file to separate
-all functions calls from the main  driver
+all functions calls from the main driver
 */
 
-// distance function
+//=============================================================================
+// Tell Wally to go exploring
+//=============================================================================
+
+void explore()
+{
+  //get the distance(inches) from the ping function
+  distanceForward = ping();
+  Serial.print("distanceForward: ");
+  Serial.println(distanceForward);
+
+  //path is clear
+  if (distanceForward > 10) {
+
+    myServo.write(83); //center the servo
+    goForward();
+  }
+  else if ((distanceForward >= 5) && (distanceForward <= 9))
+  {
+    brake();
+    //scan right
+    myServo.write(120);
+    delay(250);
+    rightDistance = ping();
+    Serial.print("rightDistance: ");
+    Serial.println(rightDistance);
+    delay(250);
+    //scan left
+    myServo.write(30);
+    delay(250);
+    leftDistance = ping();
+    Serial.print("leftDistance: ");
+    Serial.println(leftDistance);
+    delay(250);
+    myServo.write(83); //center the servo
+    delay(250);
+    compareDistance();
+  }
+  else if (distanceForward <= 4)
+  {
+    reverse();
+  }
+}
+
+//=============================================================================
+// Compare Distances from PING)))
+//=============================================================================
+
 void compareDistance()
 {
   if (leftDistance > rightDistance)
@@ -26,10 +73,12 @@ void compareDistance()
     goBackwards();
     delay(500);
   }
-
 }
 
-/* Ping functions */
+//=============================================================================
+// PING))) world and related functions
+//=============================================================================
+
 long ping()
 {
   // establish variables for duration of the ping,
@@ -83,7 +132,10 @@ long microsecondsToCentimeters(long microseconds)
   return microseconds / 29 / 2;
 }
 
-/* Motor functions */
+//=============================================================================
+// Motor functions
+//=============================================================================
+
 void goForward()
 {
   //Get the distance from the sensor and map it to achieve
@@ -146,8 +198,7 @@ void motorDrive(boolean motorNumber, boolean motorDirection, int motorSpeed)
 
   boolean pinIn1;  //Relates to AIN1 or BIN1 (depending on the motor number specified)
 
-
-//Specify the Direction to turn the motor
+  //Specify the Direction to turn the motor
   //Clockwise: AIN1/BIN1 = HIGH and AIN2/BIN2 = LOW
   //Counter-Clockwise: AIN1/BIN1 = LOW and AIN2/BIN2 = HIGH
   if (motorDirection == turnCW)
@@ -155,7 +206,7 @@ void motorDrive(boolean motorNumber, boolean motorDirection, int motorSpeed)
   else
     pinIn1 = LOW;
 
-//Select the motor to turn, and set the direction and the speed
+  //Select the motor to turn, and set the direction and the speed
   if(motorNumber == motor1)
   {
     digitalWrite(pinAIN1, pinIn1);
@@ -169,18 +220,14 @@ void motorDrive(boolean motorNumber, boolean motorDirection, int motorSpeed)
     analogWrite(pinPWMB, motorSpeed);
   }
 
-
-
-//Finally , make sure STBY is disabled - pull it HIGH
+  //Finally , make sure STBY is disabled - pull it HIGH
   digitalWrite(pinSTBY, HIGH);
 
 }
 
 void motorBrake(boolean motorNumber)
 {
-/*
-This "Short Brake"s the specified motor, by setting speed to zero
-*/
+  //This "Short Brake"s the specified motor, by setting speed to zero
 
   if (motorNumber == motor1)
     analogWrite(pinPWMA, 0);
@@ -191,9 +238,8 @@ This "Short Brake"s the specified motor, by setting speed to zero
 
 void motorStop(boolean motorNumber)
 {
-  /*
-  This stops the specified motor by setting both IN pins to LOW
-  */
+  // This stops the specified motor by setting both IN pins to LOW
+
   if (motorNumber == motor1) {
     digitalWrite(pinAIN1, LOW);
     digitalWrite(pinAIN2, LOW);
@@ -205,16 +251,17 @@ void motorStop(boolean motorNumber)
   }
 }
 
-
 void motorsStandby()
 {
-  /*
-  This puts the motors into Standby Mode
-  */
+  //This puts the motors into Standby Mode
+
   digitalWrite(pinSTBY, LOW);
 }
 
-/* Blink function */
+//=============================================================================
+// Status LED blink
+//=============================================================================
+
 void blink()
 {
   //blink led 5 times
@@ -226,14 +273,18 @@ void blink()
   }
 }
 
-/* Piezo beep */
+//=============================================================================
+// Piezo beep
+//=============================================================================
+
 void beep(){
+  //beep peizo 3 times
   for (int i = 0; i < 3; i++)
   {
-    digitalWrite(4, HIGH);      // Almost any value can be used except 0 and 255                          // experiment to get the best tone
-    delay(50);          // wait for a delayms ms
-    digitalWrite(4, LOW);       // 0 turns it off
-    delay(50);          // wait for a delayms ms
+    digitalWrite(4, HIGH);
+    delay(50);
+    digitalWrite(4, LOW);
+    delay(50);
   }
   blink();
 }
