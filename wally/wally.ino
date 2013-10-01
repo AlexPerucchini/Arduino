@@ -68,6 +68,9 @@ int distanceForward = 0;
 int leftDistance    = 0;
 int rightDistance   = 0;
 
+//explore
+boolean exploreMode = false;
+
 //Standby
 int pinSTBY = 10;
 
@@ -89,34 +92,33 @@ void setup() {
   pinMode(pinSTBY, OUTPUT);
 
   myServo.attach(servoPin);
-
   showMenu();
+
 }
 
 void loop()
 {
-   Serial.println(F("Wally autonomous rover system"));
-   int incomingByte, i, n;
 
+  int incomingByte, i, n;
+  Serial.flush();//flush all previous received and transmitted data
   if (Serial.available() > 0)
   {
     incomingByte = Serial.read();
+    //There is an incoming command get out of exploreMode
+    exploreMode = false;
+    //stop the motors and go on standby
+    brake();
 
     switch (incomingByte)
     {
       case 'b':
-        Serial.println(F("Blink();"));
+        Serial.println(F("Blink;"));
         blink();
         Serial.println(F("-----------"));
         break;
       case 'e':
         Serial.println(F("Explore"));
-        digitalWrite(13,HIGH);
-        Serial.println(F("-----------"));
-        break;
-      case 's':
-        Serial.println(F("Motor Standby"));
-        motorsStandby();
+        exploreMode = true;
         Serial.println(F("-----------"));
         break;
       case 'i':
@@ -146,6 +148,7 @@ void loop()
         break;
     }
   }
-
+  //if exploreMode true keep looping
+  if(exploreMode) explore();
 }
 /*============================== END OF FILE =================================*/

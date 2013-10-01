@@ -265,7 +265,7 @@ void motorsStandby()
 void blink()
 {
   //blink led 5 times
-  for(int i= 0; i < 5; i++)
+  for(int i = 0; i < 5; i++)
   {
     digitalWrite(ledPin, HIGH);
     delay(50);
