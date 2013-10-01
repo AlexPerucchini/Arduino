@@ -64,9 +64,9 @@ int pinBIN2 = 12; //Direction
 int pinPWMB = 5; //Speed
 
 //Ping
-int distanceForward = 0;
-int leftDistance    = 0;
-int rightDistance   = 0;
+int frontDistance  = 0;
+int leftDistance   = 0;
+int rightDistance  = 0;
 
 //explore
 boolean exploreMode = false;
@@ -99,6 +99,9 @@ void setup() {
 void loop()
 {
 
+  //debug explore
+  explore();
+  /*
   int incomingByte, i, n;
   Serial.flush();//flush all previous received and transmitted data
   if (Serial.available() > 0)
@@ -148,7 +151,8 @@ void loop()
         break;
     }
   }
-  //if exploreMode true keep looping
+  //if exploreMode true keep or and we have no serial input keep exploring
   if(exploreMode) explore();
+  */
 }
 /*============================== END OF FILE =================================*/

@@ -12,42 +12,14 @@ all functions calls from the main driver
 
 void explore()
 {
-  //get the distance(inches) from the ping function
-  distanceForward = ping();
-  Serial.print("distanceForward: ");
-  Serial.println(distanceForward);
 
-  //path is clear
-  if (distanceForward > 10) {
-
-    myServo.write(83); //center the servo
-    goForward();
-  }
-  else if ((distanceForward >= 5) && (distanceForward <= 9))
-  {
-    brake();
-    //scan right
-    myServo.write(120);
-    delay(250);
+    turnServoCenter();
+    frontDistance = ping();
+    turnServoRight();
     rightDistance = ping();
-    Serial.print("rightDistance: ");
-    Serial.println(rightDistance);
-    delay(250);
-    //scan left
-    myServo.write(30);
-    delay(250);
+    turnServoLeft();
     leftDistance = ping();
-    Serial.print("leftDistance: ");
-    Serial.println(leftDistance);
-    delay(250);
-    myServo.write(83); //center the servo
-    delay(250);
     compareDistance();
-  }
-  else if (distanceForward <= 4)
-  {
-    reverse();
-  }
 }
 
 //=============================================================================
@@ -56,22 +28,40 @@ void explore()
 
 void compareDistance()
 {
-  if (leftDistance > rightDistance)
+  //distance threshold before turning
+  int minDistance  = 12;
+  if((leftDistance > minDistance) && (rightDistance > minDistance) &&
+     (frontDistance > minDistance))
+  {
+    goForward();
+    Serial.println("Going forward...");
+  }
+  else if((leftDistance > rightDistance) && (leftDistance >= minDistance))
   {
     turnLeft();
-    Serial.println("turnLeft");
-    delay(500);
+    Serial.print("rightDistance: ");
+    Serial.println(rightDistance);
+    Serial.print("leftDistance: ");
+    Serial.println(leftDistance);
+    Serial.println("Turning left...");
   }
-  else if(leftDistance < rightDistance)
+  else if((leftDistance < rightDistance) && (rightDistance >= minDistance))
   {
     turnRight();
-    Serial.println("turnRight");
-    delay(500);
+    Serial.print("rightDistance: ");
+    Serial.println(rightDistance);
+    Serial.print("leftDistance: ");
+    Serial.println(leftDistance);
+    Serial.println("Tunrning right...");
   }
   else
   {
+    Serial.print("rightDistance: ");
+    Serial.println(rightDistance);
+    Serial.print("leftDistance: ");
+    Serial.println(leftDistance);
+    Serial.println("backwards");
     goBackwards();
-    delay(500);
   }
 }
 
@@ -132,6 +122,26 @@ long microsecondsToCentimeters(long microseconds)
   return microseconds / 29 / 2;
 }
 
+void turnServoRight()
+{
+  //scan right
+  myServo.write(120);
+  delay(250);
+}
+
+void turnServoLeft()
+{
+  //scan left
+  myServo.write(30);
+  delay(250);
+}
+
+void turnServoCenter()
+{
+  //center the servo
+  myServo.write(83);
+  delay(250);
+}
 //=============================================================================
 // Motor functions
 //=============================================================================
@@ -141,7 +151,7 @@ void goForward()
   //Get the distance from the sensor and map it to achieve
   //a gradual increase to the motor speed
   int motorSpeed = ping();
-  motorSpeed = map (motorSpeed, 8, 60, 100, 254);
+  motorSpeed = map (motorSpeed, 10, 60, 80, 200);
   motorSpeed = constrain( motorSpeed, 0, 254);
   Serial.print("MotorSpeed: ");
   Serial.println(motorSpeed);
@@ -254,7 +264,6 @@ void motorStop(boolean motorNumber)
 void motorsStandby()
 {
   //This puts the motors into Standby Mode
-
   digitalWrite(pinSTBY, LOW);
 }
 
