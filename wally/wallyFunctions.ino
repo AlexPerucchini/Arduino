@@ -12,7 +12,7 @@ all functions calls from the main driver
 
 void explore()
 {
-    int minSafeDist = 10
+    int minSafeDist = 10;
 
     turnServoCenter();
     frontDistance = ping();
@@ -21,7 +21,7 @@ void explore()
     {
       goForward();
     }
-    else if
+    else
     {
       brake();
       turnServoRight();
