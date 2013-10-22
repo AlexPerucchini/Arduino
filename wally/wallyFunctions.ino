@@ -138,7 +138,6 @@ void goForward()
   //Drive both motors CW, full speed 255, half speed 127
   motorDrive(motor1, turnCW, motorSpeed);
   motorDrive(motor2, turnCW, motorSpeed);
-  delay(110);
 }
 
 void goBackwards()
@@ -147,6 +146,8 @@ void goBackwards()
   motorDrive(motor1, turnCCW, 220);
   motorDrive(motor2, turnCCW, 220);
   beep();
+  blink();
+  delay(1000);
 }
 
 void reverse()
@@ -162,6 +163,7 @@ void turnLeft()
   //Turn towards motor1: Stop Motor1, slow Motor2
   motorStop(motor1);
   motorDrive(motor2, turnCW, 160);
+  delay(800);
 }
 
 void turnRight()
@@ -169,6 +171,7 @@ void turnRight()
   //Turn towards motor2: Stop Motor2, slow Motor2
   motorStop(motor2);
   motorDrive(motor1, turnCW, 160);
+  delay(800);
 }
 
 void brake()
