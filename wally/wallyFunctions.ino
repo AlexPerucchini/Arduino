@@ -12,58 +12,39 @@ all functions calls from the main driver
 
 void explore()
 {
+    int minSafeDist = 10
 
     turnServoCenter();
     frontDistance = ping();
-    turnServoRight();
-    rightDistance = ping();
-    turnServoLeft();
-    leftDistance = ping();
-    compareDistance();
+
+    if(frontDistance > minSafeDist)
+    {
+      goForward();
+    }
+    else if
+    {
+      brake();
+      turnServoRight();
+      rightDistance = ping();
+      turnServoLeft();
+      leftDistance = ping();
+      if (rightDistance > leftDistance && rightDistance > minSafeDist)
+      {
+        turnRight();
+        //force the program to return to the top of the loop
+        return;
+      }
+      if (leftDistance > rightDistance && leftDistance > minSafeDist)
+      {
+        turnLeft();
+        return;
+      }
+      //escape
+      goBackwards();
+    }
+
 }
 
-//=============================================================================
-// Compare Distances from PING)))
-//=============================================================================
-
-void compareDistance()
-{
-  //distance threshold before turning
-  int minDistance  = 12;
-  if((leftDistance > minDistance) && (rightDistance > minDistance) &&
-     (frontDistance > minDistance))
-  {
-    goForward();
-    Serial.println("Going forward...");
-  }
-  else if((leftDistance > rightDistance) && (leftDistance >= minDistance))
-  {
-    turnLeft();
-    Serial.print("rightDistance: ");
-    Serial.println(rightDistance);
-    Serial.print("leftDistance: ");
-    Serial.println(leftDistance);
-    Serial.println("Turning left...");
-  }
-  else if((leftDistance < rightDistance) && (rightDistance >= minDistance))
-  {
-    turnRight();
-    Serial.print("rightDistance: ");
-    Serial.println(rightDistance);
-    Serial.print("leftDistance: ");
-    Serial.println(leftDistance);
-    Serial.println("Tunrning right...");
-  }
-  else
-  {
-    Serial.print("rightDistance: ");
-    Serial.println(rightDistance);
-    Serial.print("leftDistance: ");
-    Serial.println(leftDistance);
-    Serial.println("backwards");
-    goBackwards();
-  }
-}
 
 //=============================================================================
 // PING))) world and related functions
@@ -92,14 +73,13 @@ long ping()
 
   // convert the time into a distance
   inches = microsecondsToInches(duration);
-  cm = microsecondsToCentimeters(duration);
+  //cm = microsecondsToCentimeters(duration);
 
   Serial.print(inches);
   Serial.print("in, ");
   Serial.print(cm);
   Serial.print("cm");
   Serial.println();
-  //delay(50);
 
   return inches;
 }
@@ -126,21 +106,21 @@ void turnServoRight()
 {
   //scan right
   myServo.write(120);
-  delay(250);
+  delay(600);
 }
 
 void turnServoLeft()
 {
   //scan left
   myServo.write(30);
-  delay(250);
+  delay(600);
 }
 
 void turnServoCenter()
 {
   //center the servo
   myServo.write(83);
-  delay(250);
+  delay(175);
 }
 //=============================================================================
 // Motor functions
@@ -158,6 +138,7 @@ void goForward()
   //Drive both motors CW, full speed 255, half speed 127
   motorDrive(motor1, turnCW, motorSpeed);
   motorDrive(motor2, turnCW, motorSpeed);
+  delay(110);
 }
 
 void goBackwards()
