@@ -1,7 +1,6 @@
 /*
 wallyFunctions.pde
 Author: Alex Perucchini
-
 This .pde file gets concatenated at the end of the Wally.ino file to separate
 all functions calls from the main driver
 */
@@ -9,7 +8,6 @@ all functions calls from the main driver
 //=============================================================================
 // Tell Wally to go exploring
 //=============================================================================
-
 void explore()
 {
     int minSafeDist = 10;
@@ -44,12 +42,9 @@ void explore()
     }
 
 }
-
-
 //=============================================================================
 // PING))) world and related functions
 //=============================================================================
-
 long ping()
 {
   // establish variables for duration of the ping,
@@ -73,7 +68,7 @@ long ping()
 
   // convert the time into a distance
   inches = microsecondsToInches(duration);
-  //cm = microsecondsToCentimeters(duration);
+  cm = microsecondsToCentimeters(duration);
 
   Serial.print(inches);
   Serial.print("in, ");
@@ -125,7 +120,6 @@ void turnServoCenter()
 //=============================================================================
 // Motor functions
 //=============================================================================
-
 void goForward()
 {
   //Get the distance from the sensor and map it to achieve
@@ -147,7 +141,7 @@ void goBackwards()
   motorDrive(motor2, turnCCW, 220);
   beep();
   blink();
-  delay(1000);
+  delay(400);
 }
 
 void reverse()
@@ -163,7 +157,7 @@ void turnLeft()
   //Turn towards motor1: Stop Motor1, slow Motor2
   motorStop(motor1);
   motorDrive(motor2, turnCW, 160);
-  delay(800);
+  delay(400);
 }
 
 void turnRight()
@@ -171,7 +165,7 @@ void turnRight()
   //Turn towards motor2: Stop Motor2, slow Motor2
   motorStop(motor2);
   motorDrive(motor1, turnCW, 160);
-  delay(800);
+  delay(400);
 }
 
 void brake()
@@ -233,7 +227,6 @@ void motorBrake(boolean motorNumber)
 void motorStop(boolean motorNumber)
 {
   // This stops the specified motor by setting both IN pins to LOW
-
   if (motorNumber == motor1) {
     digitalWrite(pinAIN1, LOW);
     digitalWrite(pinAIN2, LOW);
@@ -250,33 +243,30 @@ void motorsStandby()
   //This puts the motors into Standby Mode
   digitalWrite(pinSTBY, LOW);
 }
-
 //=============================================================================
 // Status LED blink
 //=============================================================================
-
 void blink()
 {
   //blink led 5 times
   for(int i = 0; i < 5; i++)
   {
     digitalWrite(ledPin, HIGH);
-    delay(50);
+    delay(60);
     digitalWrite(ledPin, LOW);
+    delay(60);
   }
 }
-
 //=============================================================================
 // Piezo beep
 //=============================================================================
-
 void beep(){
   //beep peizo 3 times
   for (int i = 0; i < 3; i++)
   {
-    digitalWrite(4, HIGH);
+    digitalWrite(piezoPin, HIGH);
     delay(50);
-    digitalWrite(4, LOW);
+    digitalWrite(piezoPin, LOW);
     delay(50);
   }
   blink();
