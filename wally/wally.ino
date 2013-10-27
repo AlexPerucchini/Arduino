@@ -38,14 +38,18 @@ The Ping))) circuit:
 
 ============================================================================*/
 
+#include <avr/boot.h>
+#include <Wire.h>
 #include <Servo.h>
 
 const int       servoPin = 2;
 const int       piezoPin = 4;
 const int       pingPin  = 7;
 const int       ledPin   = 13;
+const int       tempPin  = 0;  //analog Pin
+
 static boolean  turnCW   = 0;  //for motorDrive function
-static boolean  turnCCW  = 1; //for motorDrive function
+static boolean  turnCCW  = 1;  //for motorDrive function
 static boolean  motor1   = 0;  //for motorDrive, motorStop, motorBrake functions
 static boolean  motor2   = 1;  //for motorDrive, motorStop, motorBrake functions
 
@@ -93,13 +97,10 @@ void setup() {
 
   myServo.attach(servoPin);
   showMenu();
-
 }
 
 void loop()
 {
-
-  //debug explore
   explore();
   /*
   int incomingByte, i, n;
@@ -115,8 +116,9 @@ void loop()
     switch (incomingByte)
     {
       case 'b':
-        Serial.println(F("Blink;"));
+        Serial.println(F("Blink & Beep"));
         blink();
+        beep();
         Serial.println(F("-----------"));
         break;
       case 'e':
@@ -125,13 +127,15 @@ void loop()
         Serial.println(F("-----------"));
         break;
       case 'i':
-        Serial.println(F("Show system information"));
-        //system telemtry information
-        //to be implented
-        //Information();
+        Serial.println(F("System Information"));
+        information();
         Serial.println(F("-----------"));
         break;
-      case 'h':
+      case 't':
+        Serial.println(F("System Telemetry"));
+        telemetry();
+        Serial.println(F("-----------"));
+        break;
       case '?':
         showMenu();
         break;
@@ -151,8 +155,7 @@ void loop()
         break;
     }
   }
-  //if exploreMode true keep or and we have no serial input keep exploring
-  if(exploreMode) explore();
+  if (exploreMode) explore();
   */
 }
 /*============================== END OF FILE =================================*/
