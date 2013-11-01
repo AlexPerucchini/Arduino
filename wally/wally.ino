@@ -72,8 +72,7 @@ int frontDistance  = 0;
 int leftDistance   = 0;
 int rightDistance  = 0;
 
-//explore
-boolean exploreMode = false;
+boolean exploreMode;
 
 //Standby
 int pinSTBY = 10;
@@ -95,19 +94,24 @@ void setup() {
   pinMode(pinBIN2, OUTPUT);
   pinMode(pinSTBY, OUTPUT);
 
+  //set exploreMode
+  exploreMode = false;
+
   myServo.attach(servoPin);
   showMenu();
 }
 
 void loop()
 {
-  explore();
-  /*
+  //explore();
   int incomingByte, i, n;
   Serial.flush();//flush all previous received and transmitted data
   if (Serial.available() > 0)
   {
     incomingByte = Serial.read();
+    //flush buffer needed not sure buffer doesn't flush
+   //while(Serial.available() > 0)
+     // Serial.read();
     //There is an incoming command get out of exploreMode
     exploreMode = false;
     //stop the motors and go on standby
@@ -155,7 +159,7 @@ void loop()
         break;
     }
   }
+  digitalWrite(ledPin, exploreMode);
   if (exploreMode) explore();
-  */
 }
 /*============================== END OF FILE =================================*/
