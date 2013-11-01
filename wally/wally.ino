@@ -47,6 +47,7 @@ const int       piezoPin = 4;
 const int       pingPin  = 7;
 const int       ledPin   = 13;
 const int       tempPin  = 0;  //analog Pin
+const int       flexPin  = 1;  //flex Sensor Pin
 
 static boolean  turnCW   = 0;  //for motorDrive function
 static boolean  turnCCW  = 1;  //for motorDrive function

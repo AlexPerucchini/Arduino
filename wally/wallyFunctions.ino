@@ -11,12 +11,19 @@ all functions calls from the main driver
 void explore()
 {
   int minSafeDist = 15;
+  int flexVal = getFlexSensor();
 
   lookAhead();
-  if (frontDistance >= minSafeDist)
+
+  if (frontDistance >= minSafeDist && flexVal > 274)
   {
     goForward();
     delay(110);
+  }
+  else if (flexVal < 273)
+  {
+    //we hit something in front
+    goBackwards();
   }
   else
   {
@@ -290,30 +297,42 @@ void beep(){
 void telemetry()
 {
   getAmbientTemp();
+  getFlexSensor();
+}
+
+int getFlexSensor()
+{
+  int v = analogRead(flexPin);
+  Serial.print("front flex sensor: ");
+  Serial.println(v);
+
+  float volts = calculate_voltage(v);
+  Serial.print("flex sensor voltage: ");
+  Serial.println(volts);
+  return v;
 }
 
 void getAmbientTemp()
 {
-  //int v = 0;
   int v = analogRead(tempPin);
 
-  Serial.print("temp sensor: ");
+  Serial.print("ambient temp sensor: ");
   Serial.println(v);
 
   //get the voltage
   float volts = calculate_voltage(v);
-  Serial.print("voltage: ");
+  Serial.print("ambient temp sensor voltage: ");
   Serial.println(volts);
 
   //get temperature celsius
   float cel = temp_cel(volts);
-  Serial.print("temp in celsius: ");
+  Serial.print("ambient temp in celsius: ");
   Serial.println(cel);
 
 
   // now convert to Fahrenheit
   float f = (cel * 9.0 / 5.0) + 32.0;
-  Serial.print("temp in fahrenheit: ");
+  Serial.print("ambient temp in fahrenheit: ");
   Serial.println(f);
 
 }
@@ -466,7 +485,7 @@ void information()
   #elif defined (__AVR_ATmega328P__)
   Serial.println(F("__AVR_ATmega328P__"));
   #elif defined (__AVR_ATmega32U2__)
-  Serial.println(F("__AVR_ATmega32U2__"));  
+  Serial.println(F("__AVR_ATmega32U2__"));
   #elif defined (__AVR_ATmega32U4__)
   Serial.println(F("__AVR_ATmega32U4__"));
   #elif defined (__AVR_ATmega32U6__)
@@ -481,7 +500,7 @@ void information()
 
   #ifdef SIGRD
   Serial.print(F("SIGRD = "));
-  Serial.println(SIGRD,DEC);  
+  Serial.println(SIGRD,DEC);
   #else
   Serial.println(F("SIGRD : not defined (let's make it 5 and see what happens)."));
   #define SIGRD 5
